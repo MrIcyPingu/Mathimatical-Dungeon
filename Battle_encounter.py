@@ -101,6 +101,7 @@ class Battle_Encounter():
          self.player.energy = 4 #resets both of entities energy
          self.Energy_lb["text"] = "Energy: " + str(self.player.energy)
          self.player.defence = 0
+         self.Health_lb["text"] = "Health: " + str(self.player.health) + " defence: " + str(self.player.defence)
          for card in self.cards:
              card.destroy() #give the user a new hand of cards
          self.card_counter = 0
@@ -133,6 +134,9 @@ class Battle_Encounter():
                     self.Health_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
                 finally:
                     return
+         if defender.health <= 0 and defender == self.enemy:
+            tkinter.messagebox.showinfo("You win",  "the enemy's health has reached 0. You win") #if the enemies health reach 0  
+            window.destroy()
                 
     #defend()
     #Used to defend an entity
@@ -150,8 +154,7 @@ class Battle_Encounter():
                 try:
                     self.Health_Enemy_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
                 finally:
-                 if defender.health <= 0 and defender == self.enemy:
-                    tkinter.messagebox.showinfo("You win",  "the enemy's health has reached 0. You win") #if the enemies health reach 0               
+                    return             
 
     #heal()
     #Used to heal an entity
@@ -188,4 +191,5 @@ class Battle_Encounter():
         card.bind("<Enter>", lambda x: self.card_focus(card)) #attaches the focus and unfocus to the card on hover
         card.bind("<Leave>", lambda x: self.card_unfocus(card))
         self.card_counter += 1
+
 

@@ -61,6 +61,10 @@ class Battle_Encounter():
         enemy_frame = tk.Frame(root, width=128,height=184, borderwidth=2, relief="groove")
         enemy_frame.place(x=420,y=140)
 
+        #Restarts the health of entities
+        self.enemy.health = 10
+        self.player.health = 10
+
         self.Health_lb=tk.Label(root, font=tkFont.Font(family='Times',size=10),fg="#333333", justify="left", text= "Health: " + str(self.player.health) + " defence: " + str(self.player.defence))
         self.Health_lb.place(x=10,y=20,width=170,height=25) #creates the player health label
 
@@ -71,6 +75,8 @@ class Battle_Encounter():
         self.Energy_lb.place(x=500,y=20,width=70,height=25) #creates the player energy label
 
         #Give the first hand of cards
+        self.card_counter = 0
+        self.cards.clear()
         while self.card_counter <= 5:
             self.New_card(root)
 
@@ -78,9 +84,6 @@ class Battle_Encounter():
         End_turn_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Times',size=10), fg="#000000", justify="center", text="End turn", command= lambda: self.End_turn_btn(root))
         End_turn_btn.place(x=250,y=20,width=70,height=25)
 
-        #Restarts the health of entities
-        self.enemy.health = 10
-        self.player.health = 10
         
     #End_turn_btn()
     #Ends the turn of the user and performs the enemy's turn
@@ -89,11 +92,11 @@ class Battle_Encounter():
          while self.enemy.energy >= 1:
               match random.randint(0, 3): #randomly gets the enemy to attack or defend until their energy runs out
                  case 1:
-                    self.attack(self.enemy, self.player, window=window)
+                    self.attack(self.enemy, self.player)
                  case 2:
                     self.defend(self.enemy)
                  case _:
-                    self.attack(self.enemy, self.player, window=window)
+                    self.attack(self.enemy, self.player)
          self.enemy.energy = 4
          self.player.energy = 4 #resets both of entities energy
          self.Energy_lb["text"] = "Energy: " + str(self.player.energy)
@@ -101,8 +104,13 @@ class Battle_Encounter():
          for card in self.cards:
              card.destroy() #give the user a new hand of cards
          self.card_counter = 0
+         self.cards.clear()
          while self.card_counter <= 5:
             self.New_card(window)
+         if self.player.health == 0:
+                tkinter.messagebox.showinfo("You lose", "your health has reached 0. GAME OVER")#if the users health reach 0
+                window.destroy()
+        
 
     #attack()
     #Used to attack an entity
@@ -116,14 +124,6 @@ class Battle_Encounter():
             else:
                defender.health -= 1 #if the defender has no defence value
             attacker.energy -= 1 #takes 1 away from the attacker energy
-            if defender.health == 0 and defender == self.enemy:
-                tkinter.messagebox.showinfo("You win",  "the enemy's health has reached 0. You win") #if the enemies health reach 0
-                window.destroy()
-                return
-            elif defender.health == 0:
-                tkinter.messagebox.showinfo("You lose", "your health has reached 0. GAME OVER")#if the users health reach 0
-                window.destroy()
-                return
             if card != None: #sets the labels to the new values
                 self.Health_Enemy_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
                 self.Energy_lb["text"] = "Energy: " + str(attacker.energy)
@@ -150,7 +150,8 @@ class Battle_Encounter():
                 try:
                     self.Health_Enemy_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
                 finally:
-                    return
+                 if defender.health == 0 and defender == self.enemy:
+                    tkinter.messagebox.showinfo("You win",  "the enemy's health has reached 0. You win") #if the enemies health reach 0               
 
     #heal()
     #Used to heal an entity
@@ -167,7 +168,6 @@ class Battle_Encounter():
     #New_card()
     #Used to create a random typed card
     def New_card(self, window: tk.Tk):
-        card_type = 0
         card = tk.Button(window, name="card_" + str(self.card_counter), bg="#f0f0f0", font=tkFont.Font(family='Times',size=10), fg="#000000", justify="center")
         match random.randint(0, 3): #determines the type of card
                  case 0:
@@ -188,5 +188,4 @@ class Battle_Encounter():
         card.bind("<Enter>", lambda x: self.card_focus(card)) #attaches the focus and unfocus to the card on hover
         card.bind("<Leave>", lambda x: self.card_unfocus(card))
         self.card_counter += 1
-
 

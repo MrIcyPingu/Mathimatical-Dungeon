@@ -107,7 +107,7 @@ class Battle_Encounter():
          self.cards.clear()
          while self.card_counter <= 5:
             self.New_card(window)
-         if self.player.health == 0:
+         if self.player.health <= 0:
                 tkinter.messagebox.showinfo("You lose", "your health has reached 0. GAME OVER")#if the users health reach 0
                 window.destroy()
         
@@ -150,7 +150,7 @@ class Battle_Encounter():
                 try:
                     self.Health_Enemy_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
                 finally:
-                 if defender.health == 0 and defender == self.enemy:
+                 if defender.health <= 0 and defender == self.enemy:
                     tkinter.messagebox.showinfo("You win",  "the enemy's health has reached 0. You win") #if the enemies health reach 0               
 
     #heal()

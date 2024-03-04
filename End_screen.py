@@ -12,7 +12,7 @@ class End_window:
         else:
             root.title("You lose")
             Title_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=48),fg="#333333", justify="center", text= "YOU LOSE")
-            Title_lb.place(x=70,y=20,width=274,height=70) #creates the title label
+            Title_lb.place(x=50,y=20,width=340,height=70) #creates the title label
         #setting window size
         width=439
         height=245
@@ -21,9 +21,6 @@ class End_window:
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
-
-        Title_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=48),fg="#333333", justify="center", text= "YOU WIN")
-        Title_lb.place(x=70,y=20,width=274,height=70) #creates the title label
 
         Correct_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Correct answers: ")
         Correct_lb.place(x=40,y=130,width=120,height=25) #creates the correct label

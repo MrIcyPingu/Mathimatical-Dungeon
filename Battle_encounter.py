@@ -91,13 +91,13 @@ class Battle_Encounter():
             self.New_card(root, button_pressed)
 
         #End turn button
-        End_turn_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="End turn", command= lambda: self.End_turn_btn(root, button_pressed))
+        End_turn_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="End turn", command= lambda: self.End_turn_btn(End_turn_btn, root, button_pressed))
         End_turn_btn.place(x=250,y=20,width=70,height=25)
 
         
     #End_turn_btn()
     #Ends the turn of the user and performs the enemy's turn
-    def End_turn_btn(self, window:tk.Tk, button_pressed):
+    def End_turn_btn(self, button: tk.Button, window:tk.Tk, button_pressed):
          self.enemy.defence = 0
          while self.enemy.energy >= 1:
               match random.randint(0, 3): #randomly gets the enemy to attack or defend until their energy runs out
@@ -119,6 +119,7 @@ class Battle_Encounter():
          while self.card_counter <= 5:
             self.New_card(window, button_pressed)
          if self.player.health <= 0:
+                button["state"] = "disabled"
                 tkinter.messagebox.showinfo("You lose", "your health has reached 0. GAME OVER")#if the users health reach 0
                 extra_window = tk.Toplevel()
                 end = End_screen.End_window(extra_window, False)

@@ -1,12 +1,13 @@
 import tkinter as tk
 import tkinter.font as tkFont
-import Battle_encounter
+import tkinter.messagebox
+import diamond
+import End_screen
 
 class Main():
     def __init__(self, root):
-        
         #setting title
-        root.title("GUI test")
+        root.title("Main menu")
         #setting window size
         width=582
         height=336
@@ -15,7 +16,6 @@ class Main():
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
-
         Title_lb = tk.Label(root, font=tkFont.Font(family='Helvetica',size=40), fg="#333333", justify="center", text="Mathematical Dungeon" )
         Title_lb.place(x=10,y=20,width=563,height=104)
 
@@ -35,10 +35,23 @@ class Main():
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-        extra_window.geometry(alignstr)  
-             
+        extra_window.geometry(alignstr)
+        extra_window.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(extra_window))
+        root.withdraw()
+
     def Start_game_Btn(self):
-        extra_window = Battle_encounter.Battle_Encounter(tk.Toplevel())
+        extra_window = tk.Toplevel()
+        map = diamond.map(extra_window)
+        map.home_window = root
+        extra_window.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(extra_window))
+        root.withdraw()
+
+    
+    def on_closing(self, window:tk.Tk):
+     if tkinter.messagebox.askokcancel("Quit", "Do you want to quit?"):
+        root.deiconify()
+        window.destroy()
+
 
 if __name__ == "__main__":
     root = tk.Tk()

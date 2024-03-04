@@ -1,8 +1,10 @@
 import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.messagebox
+import tkinter.ttk
 import random
-
+import diamond
+import End_screen
 
 #Entity
 #A class for the creation of entities that will be used the battle encounter
@@ -13,7 +15,6 @@ import random
 class Entity:
      health = 10
      defence = 0
-     energy_limit = 4
      energy = 4
 
 #Battle_Encounter
@@ -23,12 +24,15 @@ class Battle_Encounter():
     enemy = Entity()
     card_counter = 0
     cards = []
-
+    home_window = tk.Tk
+    Main_window = tk.Tk
     #card_focus()
     #this function is used to enlarge a card to make it stand out in the hand
     #@param - button - tk.button - the card to be focused on
     def card_focus(self, button: tk.Button):
             button.tkraise()
+            if button.cget("image") == "pyimage2":
+                button["image"] = self.attack_picture
             button.place(y=330,width=162,height=172)
 
     #card_unfocus()
@@ -40,8 +44,10 @@ class Battle_Encounter():
                 card_below = self.cards[card_num + 1]
                 button.lower(card_below)
             button.place(y=430,width=81,height=86)
+            if button.cget("image") == "pyimage1":
+                button["image"] = self.attack_picture_small
 
-    def __init__(self, root):
+    def __init__(self, root, button_pressed):
         #setting title
         root.title("Battle")
         #setting window size
@@ -52,7 +58,9 @@ class Battle_Encounter():
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
-
+        self.attack_picture = tkinter.PhotoImage(file = r"attack.png")
+        self.attack_picture_small = tkinter.PhotoImage(file = r"attack_small.png")
+        self.heal_picture = tkinter.PhotoImage(file = r"attack.png")
         #Hero picture
         hero_frame = tk.Frame(root, width=128,height=184, borderwidth=2, relief="groove")
         hero_frame.place(x=60,y=140)
@@ -64,30 +72,32 @@ class Battle_Encounter():
         #Restarts the health of entities
         self.enemy.health = 10
         self.player.health = 10
+        self.enemy.energy = 4
+        self.player.energy = 4
 
-        self.Health_lb=tk.Label(root, font=tkFont.Font(family='Times',size=10),fg="#333333", justify="left", text= "Health: " + str(self.player.health) + " defence: " + str(self.player.defence))
+        self.Health_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Health: " + str(self.player.health) + " defence: " + str(self.player.defence))
         self.Health_lb.place(x=10,y=20,width=170,height=25) #creates the player health label
 
-        self.Health_Enemy_lb=tk.Label(root, font=tkFont.Font(family='Times',size=10),fg="#333333", justify="left", text= "Health: " + str(self.enemy.health) + " defence: " + str(self.enemy.defence))
+        self.Health_Enemy_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Health: " + str(self.enemy.health) + " defence: " + str(self.enemy.defence))
         self.Health_Enemy_lb.place(x=380,y=160,width=170,height=25) #creates the eneny health label
 
-        self.Energy_lb=tk.Label(root, font=tkFont.Font(family='Times',size=10),fg="#333333", justify="right", text="Energy: " + str(self.player.energy))
+        self.Energy_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="right", text="Energy: " + str(self.player.energy))
         self.Energy_lb.place(x=500,y=20,width=70,height=25) #creates the player energy label
 
         #Give the first hand of cards
         self.card_counter = 0
         self.cards.clear()
         while self.card_counter <= 5:
-            self.New_card(root)
+            self.New_card(root, button_pressed)
 
         #End turn button
-        End_turn_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Times',size=10), fg="#000000", justify="center", text="End turn", command= lambda: self.End_turn_btn(root))
+        End_turn_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="End turn", command= lambda: self.End_turn_btn(root, button_pressed))
         End_turn_btn.place(x=250,y=20,width=70,height=25)
 
         
     #End_turn_btn()
     #Ends the turn of the user and performs the enemy's turn
-    def End_turn_btn(self, window:tk.Tk):
+    def End_turn_btn(self, window:tk.Tk, button_pressed):
          self.enemy.defence = 0
          while self.enemy.energy >= 1:
               match random.randint(0, 3): #randomly gets the enemy to attack or defend until their energy runs out
@@ -107,9 +117,13 @@ class Battle_Encounter():
          self.card_counter = 0
          self.cards.clear()
          while self.card_counter <= 5:
-            self.New_card(window)
+            self.New_card(window, button_pressed)
          if self.player.health <= 0:
                 tkinter.messagebox.showinfo("You lose", "your health has reached 0. GAME OVER")#if the users health reach 0
+                extra_window = tk.Toplevel()
+                end = End_screen.End_window(extra_window, False)
+                end.home_window = self.Main_window
+                self.home_window.destroy()
                 window.destroy()
         
 
@@ -118,7 +132,7 @@ class Battle_Encounter():
     #@param - attacker - Entity - the attacking entity
     #@param - defender - Entity - the defending entity
     #@param - card - tk.Button - the card being used
-    def attack(self, attacker: Entity, defender: Entity, card: tk.Button=None, window:tk.Tk=None):
+    def attack(self, attacker: Entity, defender: Entity, card: tk.Button=None, window:tk.Tk=None, button_pressed: int=None):
          if attacker.energy > 0:
             if defender.defence > 0:
                 defender.defence -= 1 # if the defender has a defence value
@@ -135,8 +149,16 @@ class Battle_Encounter():
                 finally:
                     return
          if defender.health <= 0 and defender == self.enemy:
-            tkinter.messagebox.showinfo("You win",  "the enemy's health has reached 0. You win") #if the enemies health reach 0  
-            window.destroy()
+            tkinter.messagebox.showinfo("You win",  "the enemy's health has reached 0. You win") #if the enemies health reach 0
+            if button_pressed == 9:
+                extra_window = tk.Toplevel()
+                end = End_screen.End_window(extra_window, True)
+                end.home_window = self.Main_window
+                self.home_window.destroy()
+                window.destroy()
+            else:
+                self.home_window.deiconify()
+                window.destroy()
                 
     #defend()
     #Used to defend an entity
@@ -170,12 +192,12 @@ class Battle_Encounter():
 
     #New_card()
     #Used to create a random typed card
-    def New_card(self, window: tk.Tk):
-        card = tk.Button(window, name="card_" + str(self.card_counter), bg="#f0f0f0", font=tkFont.Font(family='Times',size=10), fg="#000000", justify="center")
+    def New_card(self, window: tk.Tk, button_pressed):
+        card = tk.Button(window, name="card_" + str(self.card_counter), bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center")
         match random.randint(0, 3): #determines the type of card
                  case 0:
                     card["text"] = "Attack"
-                    card["command"] = lambda: self.attack(self.player, self.enemy, card, window)
+                    card["command"] = lambda: self.attack(self.player, self.enemy, card, window, button_pressed)
                  case 1:
                     card["text"] = "Defend"
                     card["command"] = lambda: self.defend(self.player, card)
@@ -183,8 +205,8 @@ class Battle_Encounter():
                     card["text"] = "Heal"
                     card["command"] = lambda: self.heal(self.player, card)
                  case _:
-                    card["text"] = "Attack"
-                    card["command"] = lambda: self.attack(self.player, self.enemy, card)
+                    card["image"] = self.attack_picture_small
+                    card["command"] = lambda: self.attack(self.player, self.enemy, card, window, button_pressed)
 
         self.cards.append(card)
         card.place(x=140 + self.card_counter*50 ,y=430,width=81,height=86)

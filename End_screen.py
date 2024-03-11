@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.font as tkFont
+import tkinter.messagebox
 ###########################################
 #Title: End_screen.py
 #Created by: Ivin Chan
@@ -32,19 +33,20 @@ class End_window:
         root.resizable(width=False, height=False)
 
         Correct_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Correct answers: " + str(map_instance.correct))
-        Correct_lb.place(x=40,y=130,width=120,height=25) #creates the correct label. Show how many correct answers they got.
+        Correct_lb.place(x=40,y=130,width=150,height=25) #creates the correct label. Show how many correct answers they got.
 
         Incorrect_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "incorrect answers: " + str(map_instance.incorrect))
-        Incorrect_lb.place(x=40,y=150,width=120,height=25) #creates the incorrect label. Show how many incorrect answers they got.
+        Incorrect_lb.place(x=40,y=150,width=150,height=25) #creates the incorrect label. Show how many incorrect answers they got.
 
         Questions_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Questions answered: " + str(map_instance.correct + map_instance.incorrect))
-        Questions_lb.place(x=40,y=170,width=130,height=25) #creates the questions label. Show how questions answered.
+        Questions_lb.place(x=40,y=170,width=160,height=25) #creates the questions label. Show how questions answered.
 
         Quit_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Quit", command= self.Quit_btn)
         Quit_btn.place(x=240,y=170,width=173,height=41) # creates a quit button
 
         Main_menu_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Main menu", command= lambda: self.Main_menu_btn(root))
         Main_menu_btn.place(x=240,y=110,width=173,height=41)# creates a main menu button
+        root.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(root))
     
 
     #create_node()
@@ -60,5 +62,15 @@ class End_window:
     def Main_menu_btn(self, window: tk.Tk):
         self.home_window.deiconify() # unhides the main menu
         window.destroy()# destroys the end screen window.
+
+    #on_closing()
+    #A function to be called on when the user manually closes the 
+    #@param - self - the current instance of the class.
+    #@param - tk.Tk - window - the end screen window
+    #@return - the main menu window appears
+    def on_closing(self, window:tk.Tk):
+     if tkinter.messagebox.askokcancel("Quit", "Do you want to quit?"):
+        self.home_window.deiconify()
+        window.destroy()
 
 

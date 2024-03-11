@@ -1,9 +1,18 @@
 import tkinter as tk
 import tkinter.font as tkFont
+###########################################
+#Title: End_screen.py
+#Created by: Ivin Chan
+#Description: The end screen of the game.
+###########################################
 
+#End_window
+#A class for the end screen window
+#@param - boolean - win - if the user lost or won
+#@param - diamond.Map - the instance of the current map class.
 class End_window:
     home_window = tk.Tk
-    def __init__(self, root, win):
+    def __init__(self, root, win, map_instance):
         #setting title
         if win == True:
             root.title("You win")
@@ -22,26 +31,34 @@ class End_window:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
-        Correct_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Correct answers: ")
-        Correct_lb.place(x=40,y=130,width=120,height=25) #creates the correct label
+        Correct_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Correct answers: " + str(map_instance.correct))
+        Correct_lb.place(x=40,y=130,width=120,height=25) #creates the correct label. Show how many correct answers they got.
 
-        Incorrect_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "incorrect answers: ")
-        Incorrect_lb.place(x=40,y=150,width=120,height=25) #creates the incorrect label
+        Incorrect_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "incorrect answers: " + str(map_instance.incorrect))
+        Incorrect_lb.place(x=40,y=150,width=120,height=25) #creates the incorrect label. Show how many incorrect answers they got.
 
-        Questions_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Questions answered: ")
-        Questions_lb.place(x=40,y=170,width=130,height=25) #creates the questions label
+        Questions_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Questions answered: " + str(map_instance.correct + map_instance.incorrect))
+        Questions_lb.place(x=40,y=170,width=130,height=25) #creates the questions label. Show how questions answered.
 
         Quit_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Quit", command= self.Quit_btn)
-        Quit_btn.place(x=240,y=170,width=173,height=41)
+        Quit_btn.place(x=240,y=170,width=173,height=41) # creates a quit button
 
         Main_menu_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Main menu", command= lambda: self.Main_menu_btn(root))
-        Main_menu_btn.place(x=240,y=110,width=173,height=41)
+        Main_menu_btn.place(x=240,y=110,width=173,height=41)# creates a main menu button
     
+
+    #create_node()
+    #A function to stop the game/applcation
+    #@param - self - the current instance of the class.
     def Quit_btn(self):
-        self.home_window.destroy()
+        self.home_window.destroy() # destroys the menu menu which stops the game
     
+    #Main_menu_btn()
+    #A function to open the main menu
+    #@param - self - the current instance of the class.
+    #@param - tk.Tk - window - the end screen window
     def Main_menu_btn(self, window: tk.Tk):
-        self.home_window.deiconify()
-        window.destroy()
+        self.home_window.deiconify() # unhides the main menu
+        window.destroy()# destroys the end screen window.
 
 

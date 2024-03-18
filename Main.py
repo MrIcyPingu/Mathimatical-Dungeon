@@ -2,6 +2,10 @@ import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.messagebox
 import diamond
+from pathlib import Path
+
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH.joinpath("assets/Main_menu")
 ###########################################
 #Title: Main.py
 #Created by: Ivin Chan
@@ -26,19 +30,59 @@ class Main():
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
-        #Creates the title text
-        Title_lb = tk.Label(root, font=tkFont.Font(family='Helvetica',size=40), fg="#333333", justify="center", text="Mathematical Dungeon" )
-        Title_lb.place(x=10,y=20,width=563,height=104)
 
-        #Creates the start game button
-        Start_game_Btn=tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Start Game")
-        Start_game_Btn.place(x=160,y=140,width=258,height=64)
-        Start_game_Btn["command"] = self.Start_game_Btn
+        canvas = tk.Canvas(
+            root,
+            bg = "#6CBBDA",
+            height = 1024,
+            width = 1440,
+            bd = 0,
+            highlightthickness = 0,
+            relief = "ridge"
+        )
+        #background image
+        canvas.place(x = 0, y = 0)
+        self.background_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_1.png"))
+        background = canvas.create_image(
+            291.0,
+            169.0,
+            image=self.background_image
+        )
+        
+        self.Title_lb_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_3.png"))
+        
+        #Creates the title
+        Title_lb = canvas.create_image(
+            285.0,
+            104.0,
+            image=self.Title_lb_image
+        )
 
         #Creates the infomation button
-        Info_Btn=tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Infomation")
-        Info_Btn.place(x=160,y=220,width=258,height=64)
-        Info_Btn["command"] = self.Info_Btn
+        self.Info_Btn_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_2.png"))
+        
+        Info_Btn = canvas.create_image(
+            369.0,
+            247.0,
+            image=self.Info_Btn_image
+        )
+        canvas.tag_bind(Info_Btn, "<Button-1>", lambda x :self.Info_Btn())
+
+        #Creates the start game button
+        self.Start_game_Btn_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_4.png"))
+        
+        Start_game_Btn = canvas.create_image(
+            206.0,
+            202.0,
+            image=self.Start_game_Btn_image
+        )
+        canvas.tag_bind(Start_game_Btn, "<ButtonRelease-1>", lambda x : self.Start_game_Btn())
+
+
 
     #Info_Btn()
     #Creates a new window with the nessary infomation on how to play the game
@@ -109,6 +153,13 @@ class Main():
         root.deiconify()
         window.destroy()
 
+    #relative_to_assets()
+    #Used to create a path to a an asset
+    #@Param - self - the current instance of the class
+    #@Param - path - the path/file to be being located
+    #@Return - a path to the asset
+    def relative_to_assets(self, path: str) -> Path:
+        return ASSETS_PATH / Path(path)
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -5,6 +5,10 @@ import tkinter.ttk
 import random
 import End_screen
 import math_questions_systems
+from pathlib import Path
+
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH.joinpath("assets/Battle_encounter")
 ###########################################
 #Title: Battle_encounter.py
 #Created by: Ivin Chan
@@ -41,8 +45,12 @@ class Battle_Encounter():
     #@param - button - tk.button - the card to be focused on
     def card_focus(self, button: tk.Button):
             button.tkraise()
-            if button.cget("image") == "pyimage2":
+            if button.cget("image") == "pyimage6":
                 button["image"] = self.attack_picture
+            elif button.cget("image") == "pyimage8":
+                button["image"] = self.defence_picture
+            elif button.cget("image") == "pyimage10":
+                button["image"] = self.heal_picture
             button.place(y=330,width=162,height=172)
 
     #card_unfocus()
@@ -55,8 +63,12 @@ class Battle_Encounter():
                 card_below = self.cards[card_num + 1]
                 button.lower(card_below)
             button.place(y=430,width=81,height=86)
-            if button.cget("image") == "pyimage1":
+            if button.cget("image") == "pyimage5":
                 button["image"] = self.attack_picture_small
+            elif button.cget("image") == "pyimage7":
+                button["image"] = self.defence_picture_small
+            elif button.cget("image") == "pyimage9":
+                button["image"] = self.heal_picture_small
 
     def __init__(self, root, button_pressed, map_instance):
         #setting title
@@ -69,9 +81,12 @@ class Battle_Encounter():
         alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
-        self.attack_picture = tkinter.PhotoImage(file = r"attack.png")
-        self.attack_picture_small = tkinter.PhotoImage(file = r"attack_small.png")
-        self.heal_picture = tkinter.PhotoImage(file = r"attack.png")
+        self.attack_picture = tkinter.PhotoImage(file = self.relative_to_assets("Attack.png"))
+        self.attack_picture_small = tkinter.PhotoImage(file = self.relative_to_assets("Attack_small.png"))
+        self.defence_picture = tkinter.PhotoImage(file = self.relative_to_assets("Defend.png"))
+        self.defence_picture_small = tkinter.PhotoImage(file = self.relative_to_assets("Defend_small.png"))
+        self.heal_picture = tkinter.PhotoImage(file = self.relative_to_assets("Heal.png"))
+        self.heal_picture_small = tkinter.PhotoImage(file = self.relative_to_assets("Heal_small.png"))
         #Hero picture
         hero_frame = tk.Frame(root, width=128,height=184, borderwidth=2, relief="groove")
         hero_frame.place(x=60,y=140)
@@ -253,17 +268,17 @@ class Battle_Encounter():
     #@param - tk.Tk - window - the battle window
     #@param - int - button_pressed - the button pressed on the map window
     def New_card(self, window: tk.Tk, button_pressed):
-        card = tk.Button(window, name="card_" + str(self.card_counter), bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center")
+        card = tk.Button(window, name="card_" + str(self.card_counter), bg="#f0f0f0", borderwidth=0, font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center")
         match random.randint(0, 3): #determines the type of card
                  case 0:
-                    card["text"] = "Attack"
                     card["command"] = lambda: self.attack(self.player, self.enemy, card, window, button_pressed)
+                    card["image"] = self.attack_picture_small
                  case 1:
-                    card["text"] = "Defend"
                     card["command"] = lambda: self.defend(self.player, card)
+                    card["image"] = self.defence_picture_small
                  case 2:
-                    card["text"] = "Heal"
                     card["command"] = lambda: self.heal(self.player, card)
+                    card["image"] = self.heal_picture_small
                  case _:
                     card["image"] = self.attack_picture_small
                     card["command"] = lambda: self.attack(self.player, self.enemy, card, window, button_pressed)
@@ -273,5 +288,13 @@ class Battle_Encounter():
         card.bind("<Enter>", lambda x: self.card_focus(card)) #attaches the focus and unfocus to the card on hover
         card.bind("<Leave>", lambda x: self.card_unfocus(card))
         self.card_counter += 1
+
+    #relative_to_assets()
+    #Used to create a path to a an asset
+    #@Param - self - the current instance of the class
+    #@Param - path - the path/file to be being located
+    #@Return - a path to the asset
+    def relative_to_assets(self, path: str) -> Path:
+        return ASSETS_PATH / Path(path)
 
 

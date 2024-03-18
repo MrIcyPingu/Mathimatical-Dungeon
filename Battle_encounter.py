@@ -87,13 +87,75 @@ class Battle_Encounter():
         self.defence_picture_small = tkinter.PhotoImage(file = self.relative_to_assets("Defend_small.png"))
         self.heal_picture = tkinter.PhotoImage(file = self.relative_to_assets("Heal.png"))
         self.heal_picture_small = tkinter.PhotoImage(file = self.relative_to_assets("Heal_small.png"))
-        #Hero picture
-        hero_frame = tk.Frame(root, width=128,height=184, borderwidth=2, relief="groove")
-        hero_frame.place(x=60,y=140)
+        
+        self.canvas = tk.Canvas(
+            root,
+            bg = "#FFFFFF",
+            height = 500,
+            width = 600,
+            bd = 0,
+            highlightthickness = 0,
+            relief = "ridge"
+        )
 
-        #Enemy picture
-        enemy_frame = tk.Frame(root, width=128,height=184, borderwidth=2, relief="groove")
-        enemy_frame.place(x=420,y=140)
+        self.canvas.place(x = 0, y = 0)
+        self.background_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_1.png"))
+        background = self.canvas.create_image(
+            300.0,
+            250.0,
+            image=self.background_image
+        )
+
+        self.Energy_lb_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_2.png"))
+        Energy_lb = self.canvas.create_image(
+            496.0,
+            38.0,
+            image=self.Energy_lb_image
+        )
+
+        self.Enemy_health_lb_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_3.png"))
+        Enemy_health_lb = self.canvas.create_image(
+            434.0,
+            133.0,
+            image=self.Enemy_health_lb_image
+        )
+
+        self.Hero_health_lb_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_4.png"))
+        Hero_health_lb = self.canvas.create_image(
+            155.0,
+            38.0,
+            image=self.Hero_health_lb_image
+        )
+
+        self.Hero_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_5.png"))
+        Hero = self.canvas.create_image(
+            130.0,
+            255.0,
+            image=self.Hero_image
+        )
+
+        self.Enemy_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_6.png"))
+        Enemy = self.canvas.create_image(
+            432.0,
+            250.0,
+            image=self.Enemy_image
+        )
+
+        self.End_turn_btn_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_7.png"))
+        End_turn_btn = self.canvas.create_image(
+            69.0,
+            132.0,
+            image=self.End_turn_btn_image
+        )
+
+        self.canvas.tag_bind(End_turn_btn, "<ButtonRelease-1>", lambda x : self.End_turn_btn(End_turn_btn, root, button_pressed))
 
         self.map_instance = map_instance
 
@@ -103,14 +165,32 @@ class Battle_Encounter():
         self.enemy.energy = 4
         self.player.energy = 0
 
-        self.Health_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Health: " + str(self.player.health) + " defence: " + str(self.player.defence))
-        self.Health_lb.place(x=10,y=20,width=170,height=25) #creates the player health label
+        self.Energy_lb = self.canvas.create_text(
+            432.0,
+            26.0,
+            anchor="nw",
+            text="Energy: " + str(self.player.energy),
+            fill="#000000",
+            font=("Inter ExtraBold", 20 * -1)
+        )
 
-        self.Health_Enemy_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Health: " + str(self.enemy.health) + " defence: " + str(self.enemy.defence))
-        self.Health_Enemy_lb.place(x=380,y=160,width=170,height=25) #creates the eneny health label
+        self.Health_lb = self.canvas.create_text(
+            14.0,
+            26.0,
+            anchor="nw",
+            text="Health: " + str(self.player.health) + "           Defence: " + str(self.player.defence),
+            fill="#000000",
+            font=("Inter ExtraBold", 20 * -1)
+        )
 
-        self.Energy_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="right", text="Energy: " + str(self.player.energy))
-        self.Energy_lb.place(x=500,y=20,width=70,height=25) #creates the player energy label
+        self.Health_Enemy_lb = self.canvas.create_text(
+            293.0,
+            121.0,
+            anchor="nw",
+            text="Health: " + str(self.enemy.health) + "           Defence: " + str(self.enemy.defence),
+            fill="#000000",
+            font=("Inter ExtraBold", 20 * -1)
+        )
 
         #Give the first hand of cards
         self.card_counter = 0
@@ -119,10 +199,6 @@ class Battle_Encounter():
             self.New_card(root, button_pressed)
 
         self.Open_question_window(root)
-
-        #End turn button
-        End_turn_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="End turn", command= lambda: self.End_turn_btn(End_turn_btn, root, button_pressed))
-        End_turn_btn.place(x=250,y=20,width=70,height=25)
 
     #Open_question_window()
     #Open a question window
@@ -178,7 +254,7 @@ class Battle_Encounter():
                     attacked += 1
          self.enemy.energy = 4 #reseting the enemies energy and player's defence
          self.player.defence = 0
-         self.Health_lb["text"] = "Health: " + str(self.player.health) + " defence: " + str(self.player.defence)
+         self.canvas.itemconfig(self.Health_lb, text="Health: " + str(self.player.health) + "           Defence: " + str(self.player.defence))
          tkinter.messagebox.showinfo("Enemy's turn", "The enemy defended: " + str(defended) + "\nThe enemy attacked: " + str(attacked))
          for card in self.cards:
              card.destroy() #give the user a new hand of cards
@@ -215,12 +291,12 @@ class Battle_Encounter():
                defender.health -= 1 #if the defender has no defence value
             attacker.energy -= 1 #takes 1 away from the attacker energy
             if card != None: #sets the labels to the new values
-                self.Health_Enemy_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
-                self.Energy_lb["text"] = "Energy: " + str(attacker.energy)
+                self.canvas.itemconfig(self.Health_Enemy_lb,text= "Health: " + str(defender.health) + "           Defence: " + str(defender.defence))
+                self.canvas.itemconfig(self.Energy_lb, text="Energy: " + str(attacker.energy))
                 card["state"] = "disabled"
             else:
                 try:
-                    self.Health_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
+                    self.canvas.itemconfig(self.Health_lb, text="Health: " + str(defender.health) + "           Defence: " + str(defender.defence))
                 finally:
                     return
          if defender.health <= 0 and defender == self.enemy:
@@ -246,12 +322,12 @@ class Battle_Encounter():
             defender.defence += 1 # adds 1 to the defenders defence
             defender.energy -= 1
             if card != None: #sets the labels to the new values
-                self.Health_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
-                self.Energy_lb["text"] = "Energy: " + str(defender.energy)
+                self.canvas.itemconfig(self.Health_lb, text="Health: " + str(defender.health) + "           Defence: " + str(defender.defence))
+                self.canvas.itemconfig(self.Energy_lb, text="Energy: " + str(defender.energy))
                 card["state"] = "disabled"
             else:
                 try:
-                    self.Health_Enemy_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence)
+                    self.canvas.itemconfig(self.Health_Enemy_lb,text="Health: " + str(defender.health) + "           Defence: " + str(defender.defence))
                 finally:
                     return             
 
@@ -264,8 +340,8 @@ class Battle_Encounter():
          if defender.energy > 0:
             defender.health += 1 #adds 1 to the defenders health
             defender.energy -= 1
-            self.Health_lb["text"] = "Health: " + str(defender.health) + " defence: " + str(defender.defence) #sets the labels to the new values
-            self.Energy_lb["text"] = "Energy: " + str(defender.energy)
+            self.canvas.itemconfig(self.Health_lb, text="Health: " + str(defender.health) + "           Defence: " + str(defender.defence))#sets the labels to the new values
+            self.canvas.itemconfig(self.Energy_lb, text="Energy: " + str(defender.energy))
             card["state"] = "disabled"
 
     #New_card()

@@ -81,7 +81,7 @@ class MathQuizApp:
         else:
             self.Battle_window.deiconify()
             self.Battle_instance.player.energy = self.correct_count
-            self.Battle_instance.Energy_lb["text"] = "Energy: " + str(self.correct_count)
+            self.Battle_instance.canvas.itemconfig(self.Battle_instance.Energy_lb, text="Energy: " + str(self.correct_count))
             self.Map_instance.correct += self.correct_count
             self.Map_instance.incorrect += self.incorrect_count
             window.destroy()

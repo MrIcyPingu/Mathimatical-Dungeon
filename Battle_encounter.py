@@ -26,6 +26,7 @@ class Entity:
      health = 10
      defence = 0
      energy = 4
+     energy_limit = 4
 
 #Battle_Encounter
 #A class for the battle encounter window
@@ -138,14 +139,63 @@ class Battle_Encounter():
             255.0,
             image=self.Hero_image
         )
+        if button_pressed == 9:
+            self.Enemy_image = tk.PhotoImage(
+                file=self.relative_to_assets("image_10.png"))
+            Enemy = self.canvas.create_image(
+                432.0,
+                250.0,
+                image=self.Enemy_image
+            )
+            self.enemy.energy = 5
+            self.enemy.health = 15
+        else:
+            match random.randint(0, 3): #determines the type of card
+                    case 0:
+                        self.Enemy_image = tk.PhotoImage(
+                            file=self.relative_to_assets("image_6.png"))
+                        Enemy = self.canvas.create_image(
+                            432.0,
+                            250.0,
+                            image=self.Enemy_image
+                        )
+                        self.enemy.energy = 4
+                        self.enemy.energy_limit = 4
+                        self.enemy.health = 10
+                    case 1:
+                        self.Enemy_image = tk.PhotoImage(
+                            file=self.relative_to_assets("image_8.png"))
+                        Enemy = self.canvas.create_image(
+                            432.0,
+                            250.0,
+                            image=self.Enemy_image
+                        )
+                        self.enemy.energy = 5
+                        self.enemy.energy_limit = 5
+                        self.enemy.health = 6
+                    case 2:
+                        self.Enemy_image = tk.PhotoImage(
+                            file=self.relative_to_assets("image_9.png"))
+                        Enemy = self.canvas.create_image(
+                            432.0,
+                            250.0,
+                            image=self.Enemy_image
+                        )
+                        self.enemy.energy = 3
+                        self.enemy.energy_limit = 3
+                        self.enemy.health = 12
+                    case _:
+                        self.Enemy_image = tk.PhotoImage(
+                            file=self.relative_to_assets("image_6.png"))
+                        Enemy = self.canvas.create_image(
+                            432.0,
+                            250.0,
+                            image=self.Enemy_image
+                        )
+                        self.enemy.energy = 4
+                        self.enemy.energy_limit = 4
+                        self.enemy.health = 10
 
-        self.Enemy_image = tk.PhotoImage(
-            file=self.relative_to_assets("image_6.png"))
-        Enemy = self.canvas.create_image(
-            432.0,
-            250.0,
-            image=self.Enemy_image
-        )
 
         self.End_turn_btn_image = tk.PhotoImage(
             file=self.relative_to_assets("image_7.png"))
@@ -160,10 +210,9 @@ class Battle_Encounter():
         self.map_instance = map_instance
 
         #Restarts the health of entities
-        self.enemy.health = 10
         self.player.health = 10
-        self.enemy.energy = 4
         self.player.energy = 0
+
 
         self.Energy_lb = self.canvas.create_text(
             432.0,
@@ -252,7 +301,7 @@ class Battle_Encounter():
                  case _:
                     self.attack(self.enemy, self.player)
                     attacked += 1
-         self.enemy.energy = 4 #reseting the enemies energy and player's defence
+         self.enemy.energy = self.enemy.energy_limit #reseting the enemies energy and player's defence
          self.player.defence = 0
          self.canvas.itemconfig(self.Health_lb, text="Health: " + str(self.player.health) + "           Defence: " + str(self.player.defence))
          tkinter.messagebox.showinfo("Enemy's turn", "The enemy defended: " + str(defended) + "\nThe enemy attacked: " + str(attacked))

@@ -163,17 +163,23 @@ class Battle_Encounter():
     #@param - int - button_pressed - the node pressed on the map window  
     def End_turn_btn(self, button: tk.Button, window:tk.Tk, button_pressed):
          self.enemy.defence = 0
+         defended = 0
+         attacked = 0
          while self.enemy.energy >= 1:
               match random.randint(0, 3): #randomly gets the enemy to attack or defend until their energy runs out
                  case 1:
                     self.attack(self.enemy, self.player)
+                    attacked += 1
                  case 2:
                     self.defend(self.enemy)
+                    defended += 1
                  case _:
                     self.attack(self.enemy, self.player)
+                    attacked += 1
          self.enemy.energy = 4 #reseting the enemies energy and player's defence
          self.player.defence = 0
          self.Health_lb["text"] = "Health: " + str(self.player.health) + " defence: " + str(self.player.defence)
+         tkinter.messagebox.showinfo("Enemy's turn", "The enemy defended: " + str(defended) + "\nThe enemy attacked: " + str(attacked))
          for card in self.cards:
              card.destroy() #give the user a new hand of cards
          self.card_counter = 0

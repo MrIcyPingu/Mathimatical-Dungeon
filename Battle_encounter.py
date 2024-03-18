@@ -45,11 +45,11 @@ class Battle_Encounter():
     #@param - button - tk.button - the card to be focused on
     def card_focus(self, button: tk.Button):
             button.tkraise()
-            if button.cget("image") == "pyimage6":
+            if button.cget("image") == self.attack_picture_small.name:
                 button["image"] = self.attack_picture
-            elif button.cget("image") == "pyimage8":
+            elif button.cget("image") == self.defence_picture_small.name:
                 button["image"] = self.defence_picture
-            elif button.cget("image") == "pyimage10":
+            elif button.cget("image") == self.heal_picture_small.name:
                 button["image"] = self.heal_picture
             button.place(y=330,width=162,height=172)
 
@@ -63,11 +63,11 @@ class Battle_Encounter():
                 card_below = self.cards[card_num + 1]
                 button.lower(card_below)
             button.place(y=430,width=81,height=86)
-            if button.cget("image") == "pyimage5":
+            if button.cget("image") == self.attack_picture.name:
                 button["image"] = self.attack_picture_small
-            elif button.cget("image") == "pyimage7":
+            elif button.cget("image") == self.defence_picture.name:
                 button["image"] = self.defence_picture_small
-            elif button.cget("image") == "pyimage9":
+            elif button.cget("image") == self.heal_picture.name:
                 button["image"] = self.heal_picture_small
 
     def __init__(self, root, button_pressed, map_instance):

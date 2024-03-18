@@ -28,55 +28,55 @@ class Info:
         )
 
         self.canvas.place(x = 0, y = 0)
-        self.image_image_1 = tk.PhotoImage(
+        self.background_image = tk.PhotoImage(
             file=self.relative_to_assets("image_1.png"))
-        image_1 = self.canvas.create_image(
+        background = self.canvas.create_image(
             301.0,
             172.0,
-            image=self.image_image_1
+            image=self.background_image
         )
 
-        self.image_image_2 = tk.PhotoImage(
+        self.title_image = tk.PhotoImage(
             file=self.relative_to_assets("image_2.png"))
-        image_2 = self.canvas.create_image(
+        title = self.canvas.create_image(
             301.0,
             44.0,
-            image=self.image_image_2
+            image=self.title_image
         )
 
-        self.image_image_3 = tk.PhotoImage(
+        self.Game_objective_image = tk.PhotoImage(
             file=self.relative_to_assets("image_3.png"))
-        image_3 = self.canvas.create_image(
+        Game_objective = self.canvas.create_image(
             98.0,
             160.0,
-            image=self.image_image_3
+            image=self.Game_objective_image
         )
 
-        self.image_image_4 = tk.PhotoImage(
+        self.Questions_image = tk.PhotoImage(
             file=self.relative_to_assets("image_4.png"))
-        image_4 = self.canvas.create_image(
+        Questions = self.canvas.create_image(
             394.0,
             160.0,
-            image=self.image_image_4
+            image=self.Questions_image
         )
 
-        self.image_image_5 = tk.PhotoImage(
+        self.Battle_image = tk.PhotoImage(
             file=self.relative_to_assets("image_5.png"))
-        image_5 = self.canvas.create_image(
+        Battle = self.canvas.create_image(
             301.0,
             292.0,
-            image=self.image_image_5
+            image=self.Battle_image
         )
 
-        self.image_image_6 = tk.PhotoImage(
+        self.Exit_image = tk.PhotoImage(
             file=self.relative_to_assets("image_6.png"))
-        image_6 = self.canvas.create_image(
+        Exit = self.canvas.create_image(
             48.0,
             57.0,
-            image=self.image_image_6
+            image=self.Exit_image
         )
 
-        self.canvas.tag_bind(image_6, "<ButtonRelease-1>", lambda x: self.on_closing(root))
+        self.canvas.tag_bind(Exit, "<ButtonRelease-1>", lambda x: self.on_closing(root))
 
     #relative_to_assets()
     #Used to create a path to a an asset

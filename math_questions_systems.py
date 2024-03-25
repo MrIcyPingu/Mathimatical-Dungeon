@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 import random
-
+from pathlib import Path
 ###########################################
 #Title: math_questions_systems.py
 #Created by: Sadeq Osmani
@@ -10,6 +10,8 @@ import random
 #this is ran the main menu of the game
 #open.
 ###########################################
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH.joinpath("assets/questions")
 
 class MathQuizApp:
     Battle_window = tk.Tk
@@ -17,14 +19,81 @@ class MathQuizApp:
     Map_instance = None
     def __init__(self, root):
         root.title("Math Quiz")
-        self.set_window_size(root, 600, 500)
+        self.set_window_size(root, 600, 426)
+        self.canvas = tk.Canvas(
+            root,
+            bg = "#FFFFFF",
+            height = 426,
+            width = 600,
+            bd = 0,
+            highlightthickness = 0,
+            relief = "ridge"
+        )
 
-        self.create_widgets(root)
-        self.generate_question()
+        self.canvas.place(x = 0, y = 0)
+        self.background_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_1.png"))
+        self.background = self.canvas.create_image(
+            300.0,
+            213.0,
+            image=self.background_image
+        )
 
+        self.question_label = self.canvas.create_text(
+            220.0,
+            170.0,
+            anchor="nw",
+            text="What Is 11*12?",
+            fill="#000000",
+            font=("Inter", 24 * -1)
+        )
+
+        self.correct_count_label = self.canvas.create_text(
+            425.0,
+            43.0,
+            anchor="nw",
+            text="Correct: 0",
+            fill="#000000",
+            font=("Inter", 24 * -1)
+        )
+
+        self.incorrect_count_label = self.canvas.create_text(
+            425.0,
+            89.0,
+            anchor="nw",
+            text="Incorrect: 0",
+            fill="#000000",
+            font=("Inter", 24 * -1)
+        )
+
+        self.answer_button_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_2.png"))
+        answer_button = self.canvas.create_image(
+            440.0833435058594,
+            285.6666259765625,
+            image=self.answer_button_image
+        )
+        self.canvas.tag_bind(answer_button, "<ButtonRelease-1>", lambda x : self.answer_button_command(root))
+
+        self.answer_entry = tk.Entry(root, bd=0, bg="#35CE0F", fg="#000716", highlightthickness=0)
+
+        self.answer_entry.place(
+            x=99.0,
+            y=252.0,
+            width=169.0,
+            height=66.0
+        )
+        self.result_label = tk.Label(root, text="", font=('Times', 10), bg="#35CE0F", foreground="#000716", justify='center')
+        self.result_label.place(
+            x=100, 
+            y=350, 
+            width=100, 
+            height=40
+        )
         # Initialize counters
         self.correct_count = 0
         self.incorrect_count = 0
+        self.generate_question()
 
     def set_window_size(self, root, width, height):
         screen_width = root.winfo_screenwidth()
@@ -32,38 +101,14 @@ class MathQuizApp:
         align_str = f'{width}x{height}+{(screen_width - width) // 2}+{(screen_height - height) // 2}'
         root.geometry(align_str)
         root.resizable(width=False, height=False)
+    
+    def relative_to_assets(self, path: str) -> Path:
+        return ASSETS_PATH / Path(path)
 
-    def create_widgets(self, root):
-        self.question_label = self.create_label(root, "", 100, 120, 370, 124)
-        self.create_label(root, "math question:", 70, 70, 151, 30)
-
-        self.answer_entry = self.create_entry(root, "", 100, 270, 177, 82)
-
-        answer_button = self.create_button(root, "Answer Button", lambda: self.answer_button_command(root), 330, 290, 117, 45)
-        self.result_label = self.create_label(root, "", 100, 350, 370, 30)
-
-        # Labels to display the count of correct and incorrect answers
-        self.correct_count_label = self.create_label(root, "Correct: 0", 420, 70, 150, 30)
-        self.incorrect_count_label = self.create_label(root, "Incorrect: 0", 420, 100, 150, 30)
-
-    def create_label(self, root, text, x, y, width, height):
-        label = ttk.Label(root, text=text, font=('Times', 10), foreground='#333333', justify='center')
-        label.place(x=x, y=y, width=width, height=height)
-        return label
-
-    def create_entry(self, root, default_text, x, y, width, height):
-        entry = ttk.Entry(root, font=('Times', 10), justify='center')
-        entry.place(x=x, y=y, width=width, height=height)
-        return entry
-
-    def create_button(self, root, text, command, x, y, width, height):
-        button = ttk.Button(root, text=text, command=command)
-        button.place(x=x, y=y, width=width, height=height)
-        return button
 
     def answer_button_command(self, window:tk.Tk):
         user_answer = self.answer_entry.get()
-        correct_answer = str(eval(self.question_label["text"].replace("What is", "").replace("?", "")))
+        correct_answer = str(eval(self.canvas.itemcget(self.question_label, "text").replace("What is", "").replace("?", "")))
 
         if user_answer == correct_answer:
             self.result_label.config(text="Correct")
@@ -73,8 +118,8 @@ class MathQuizApp:
             self.incorrect_count += 1
 
         # Update counters
-        self.correct_count_label.config(text=f"Correct: {self.correct_count}")
-        self.incorrect_count_label.config(text=f"Incorrect: {self.incorrect_count}")
+        self.canvas.itemconfig(self.correct_count_label, text=f"Correct: {self.correct_count}")
+        self.canvas.itemconfig(self.incorrect_count_label,text=f"Incorrect: {self.incorrect_count}")
 
         if self.correct_count + self.incorrect_count != 4:
             self.generate_question()
@@ -89,7 +134,6 @@ class MathQuizApp:
     def generate_question(self):
         # Clear the result label
         self.result_label.config(text="")
-        
         # Clear the answer entry
         self.answer_entry.delete(0, tk.END)
         
@@ -97,4 +141,4 @@ class MathQuizApp:
         num2 = random.randint(1, 20)
         operation = random.choice(['+', '-', '*', '/'])
         question_text = f"What is {num1} {operation} {num2}?"
-        self.question_label.config(text=question_text)
+        self.canvas.itemconfig(self.question_label, text=question_text)

@@ -1,12 +1,14 @@
 import tkinter as tk
 import tkinter.font as tkFont
 import tkinter.messagebox
+from pathlib import Path
 ###########################################
 #Title: End_screen.py
 #Created by: Ivin Chan
 #Description: The end screen of the game.
 ###########################################
-
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH.joinpath("assets/end")
 #End_window
 #A class for the end screen window
 #@param - boolean - win - if the user lost or won
@@ -14,15 +16,6 @@ import tkinter.messagebox
 class End_window:
     home_window = tk.Tk
     def __init__(self, root, win, map_instance):
-        #setting title
-        if win == True:
-            root.title("You win")
-            Title_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=48),fg="#333333", justify="center", text= "YOU WIN")
-            Title_lb.place(x=70,y=20,width=274,height=70) #creates the title label
-        else:
-            root.title("You lose")
-            Title_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=48),fg="#333333", justify="center", text= "YOU LOSE")
-            Title_lb.place(x=50,y=20,width=340,height=70) #creates the title label
         #setting window size
         width=439
         height=245
@@ -32,20 +25,91 @@ class End_window:
         root.geometry(alignstr)
         root.resizable(width=False, height=False)
 
-        Correct_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Correct answers: " + str(map_instance.correct))
-        Correct_lb.place(x=40,y=130,width=150,height=25) #creates the correct label. Show how many correct answers they got.
+        self.canvas = tk.Canvas(
+            root,
+            bg = "#FFFFFF",
+            height = 245,
+            width = 439,
+            bd = 0,
+            highlightthickness = 0,
+            relief = "ridge"
+        )
 
-        Incorrect_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "incorrect answers: " + str(map_instance.incorrect))
-        Incorrect_lb.place(x=40,y=150,width=150,height=25) #creates the incorrect label. Show how many incorrect answers they got.
+        self.canvas.place(x = 0, y = 0)
+        self.background_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_1.png"))
+        background = self.canvas.create_image(
+            219.0,
+            122.0,
+            image=self.background_image
+        )
 
-        Questions_lb=tk.Label(root, font=tkFont.Font(family='Helvetica',size=10),fg="#333333", justify="left", text= "Questions answered: " + str(map_instance.correct + map_instance.incorrect))
-        Questions_lb.place(x=40,y=170,width=160,height=25) #creates the questions label. Show how questions answered.
+        self.Main_menu_btn_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_2.png"))
+        Main_menu_btn = self.canvas.create_image(
+            358.0,
+            139.0,
+            image=self.Main_menu_btn_image
+        )
+        self.canvas.tag_bind(Main_menu_btn, "<ButtonRelease-1>", lambda x : self.Main_menu_btn(root))
 
-        Quit_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Quit", command= self.Quit_btn)
-        Quit_btn.place(x=240,y=170,width=173,height=41) # creates a quit button
+        self.Quit_btn_image = tk.PhotoImage(
+            file=self.relative_to_assets("image_3.png"))
+        Quit_btn = self.canvas.create_image(
+            351.52496337890625,
+            182.79470825195312,
+            image=self.Quit_btn_image
+        )
+        self.canvas.tag_bind(Quit_btn, "<ButtonRelease-1>", lambda x : self.Quit_btn())
 
-        Main_menu_btn = tk.Button(root, bg="#f0f0f0", font=tkFont.Font(family='Helvetica',size=10), fg="#000000", justify="center", text="Main menu", command= lambda: self.Main_menu_btn(root))
-        Main_menu_btn.place(x=240,y=110,width=173,height=41)# creates a main menu button
+        self.canvas.create_text(
+            7.597900390625,
+            126.79571533203125,
+            anchor="nw",
+            text="Correct Answers: " + str(map_instance.correct),
+            fill="#1E1E1E",
+            font=("Inter", 16 * -1)
+        )
+
+        self.canvas.create_text(
+            7.597900390625,
+            152.79571533203125,
+            anchor="nw",
+            text="Incorrect Answers: " + str(map_instance.incorrect),
+            fill="#000000",
+            font=("Inter", 16 * -1)
+        )
+
+        self.canvas.create_text(
+            7.597900390625,
+            175.79571533203125,
+            anchor="nw",
+            text="Questions Answered: " + str(map_instance.correct + map_instance.incorrect),
+            fill="#000000",
+            font=("Inter", 16 * -1)
+        )
+
+        #setting title
+        if win == True:
+            root.title("You win")
+            self.canvas.create_text(
+                139.0,
+                24.0,
+                anchor="nw",
+                text="YOU WIN",
+                fill="#000000",
+                font=("Inter", 32 * -1)
+            )
+        else:
+            root.title("You lose")
+            self.canvas.create_text(
+                139.0,
+                24.0,
+                anchor="nw",
+                text="YOU LOSE",
+                fill="#000000",
+                font=("Inter", 32 * -1)
+            )
         root.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(root))
     
 
@@ -72,5 +136,13 @@ class End_window:
      if tkinter.messagebox.askokcancel("Quit", "Do you want to quit?"):
         self.home_window.deiconify()
         window.destroy()
+
+    #relative_to_assets()
+    #Used to create a path to a an asset
+    #@Param - self - the current instance of the class
+    #@Param - path - the path/file to be being located
+    #@Return - a path to the asset
+    def relative_to_assets(self, path: str) -> Path:
+        return ASSETS_PATH / Path(path)
 
 

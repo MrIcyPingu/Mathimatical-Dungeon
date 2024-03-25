@@ -286,7 +286,8 @@ class Battle_Encounter():
     #@param - tk.button - button - the button pressed
     #@param - tk.Tk - window - the battle window
     #@param - int - button_pressed - the node pressed on the map window  
-    def End_turn_btn(self, button: tk.Button, window:tk.Tk, button_pressed):
+    def End_turn_btn(self, button, window:tk.Tk, button_pressed):
+         self.canvas.tag_unbind(button, "<ButtonRelease-1>")
          self.enemy.defence = 0
          defended = 0
          attacked = 0
@@ -305,6 +306,7 @@ class Battle_Encounter():
          self.player.defence = 0
          self.canvas.itemconfig(self.Health_lb, text="Health: " + str(self.player.health) + "           Defence: " + str(self.player.defence))
          tkinter.messagebox.showinfo("Enemy's turn", "The enemy defended: " + str(defended) + "\nThe enemy attacked: " + str(attacked))
+         self.canvas.tag_bind(button, "<ButtonRelease-1>", lambda x : self.End_turn_btn(button, window, button_pressed))
          for card in self.cards:
              card.destroy() #give the user a new hand of cards
          self.card_counter = 0
@@ -314,7 +316,7 @@ class Battle_Encounter():
          if self.player.health > 0: #check if the player's health is 0
             self.Open_question_window(window) # opens a question window
          else:     
-            button["state"] = "disabled" # disables the end_turn button
+            self.canvas.tag_unbind(button, "<ButtonRelease-1>")
             tkinter.messagebox.showinfo("You lose", "your health has reached 0. GAME OVER")#if the users health reach 0
             extra_window = tk.Toplevel() 
             end = End_screen.End_window(extra_window, False, self.map_instance) # creates a end screen window

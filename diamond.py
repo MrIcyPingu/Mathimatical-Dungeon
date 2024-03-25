@@ -54,9 +54,9 @@ class Map:
       )
 
      self.arrow_image = tk.PhotoImage(
-         file=self.relative_to_assets("image_3.png"))
+         file=self.relative_to_assets("image_2.png"))
      arrows = self.canvas.create_image(
-         302.0,
+         339.0,
          220.0,
          image=self.arrow_image
       )
@@ -84,11 +84,11 @@ class Map:
                 lb.grid_forget()
     #sets the starting node to enabled
      self.buttons[(3,0)]["state"] = "normal"
-     self.buttons[(3,0)]["background"] = "#CB4CCB"
-     self.buttons[(3,0)]["activebackground"] = "#CB4CCB"
-     self.buttons[(3,0)]["foreground"] = "#CB4CCB"
-     self.buttons[(3,0)]["activeforeground"] = "#CB4CCB"
-     self.buttons[(3,0)]["disabledforeground"]="#CB4CCB"
+     self.buttons[(3,0)]["background"] = "#7875FF"
+     self.buttons[(3,0)]["activebackground"] = "#7875FF"
+     self.buttons[(3,0)]["foreground"] = "#7875FF"
+     self.buttons[(3,0)]["activeforeground"] = "#7875FF"
+     self.buttons[(3,0)]["disabledforeground"]="#7875FF"
     
     #create_node()
     #A function to create the buttons that will be the nodes of the map.
@@ -97,7 +97,7 @@ class Map:
     #@return - tk.button - button - the button that will acts as the node on the map.
     def create_node(self, window: tk.Tk):
       #Creating the button
-      button = tk.Button(window, name="node_" + str(self.node_counter), background="#8A078A", activeforeground="#8A078A", foreground="#8A078A", activebackground="#8A078A", disabledforeground="#8A078A", borderwidth=0, width=8, height=2, justify="center")
+      button = tk.Button(window, name="node_" + str(self.node_counter), background="#2F2CC9", activeforeground="#2F2CC9", foreground="#2F2CC9", activebackground="#2F2CC9", disabledforeground="#2F2CC9", borderwidth=0, width=8, height=2, justify="center")
       button["command"] = lambda: self.start_encounter(button, window)
       button["state"] = "disabled" #Making the button unclickable for the time being.
       self.node_counter += 1
@@ -124,11 +124,11 @@ class Map:
         for button in nodes:
            if button in self.buttons:
               self.buttons[button]["state"] = "normal"
-              self.buttons[button]["background"] = "#CB4CCB"
-              self.buttons[button]["activebackground"] = "#CB4CCB"
-              self.buttons[button]["foreground"] = "#CB4CCB" # Enables all nodes that are connected, if the node exists.
-              self.buttons[button]["activeforeground"] = "#CB4CCB"
-              self.buttons[button]["disabledforeground"]="#CB4CCB"
+              self.buttons[button]["background"] = "#7875FF"
+              self.buttons[button]["activebackground"] = "#7875FF"
+              self.buttons[button]["foreground"] = "#7875FF" # Enables all nodes that are connected, if the node exists.
+              self.buttons[button]["activeforeground"] = "#7875FF"
+              self.buttons[button]["disabledforeground"]="#7875FF"
         window.withdraw() # hides the map window
 
     #on_closing()

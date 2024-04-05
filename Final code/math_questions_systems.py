@@ -83,11 +83,11 @@ class MathQuizApp:
             width=169.0,
             height=66.0
         )
-        self.result_label = tk.Label(root, text="", font=('Times', 10), bg="#35CE0F", foreground="#000716", justify='center')
+        self.result_label = tk.Label(root, text="", font=('Inter', 10), bg="#35CE0F", foreground="#000716", justify='center')
         self.result_label.place(
             x=100, 
             y=350, 
-            width=100, 
+            width=350, 
             height=40
         )
         # Initialize counters
@@ -108,18 +108,21 @@ class MathQuizApp:
 
     def answer_button_command(self, window:tk.Tk):
         user_answer = self.answer_entry.get()
-        correct_answer = str(eval(self.canvas.itemcget(self.question_label, "text").replace("What is", "").replace("?", "")))
+        self.check_answer(user_answer, window)
+
+    def check_answer(self, user_answer, window:tk.Tk):
+        num1, operation, num2 = self.canvas.itemcget(self.question_label, "text").replace("What is", "").replace("?", "").split()
+        if operation == '/':
+            correct_answer = str(int(num1) // int(num2))
+        else:
+            correct_answer = str(eval(self.canvas.itemcget(self.question_label, "text").replace("What is", "").replace("?", "")))
 
         if user_answer == correct_answer:
             self.result_label.config(text="Correct")
             self.correct_count += 1
         else:
-            self.result_label.config(text="Wrong")
+            self.result_label.config(text=f"Wrong. Correct answer is {correct_answer}")
             self.incorrect_count += 1
-
-        # Update counters
-        self.canvas.itemconfig(self.correct_count_label, text=f"Correct: {self.correct_count}")
-        self.canvas.itemconfig(self.incorrect_count_label,text=f"Incorrect: {self.incorrect_count}")
 
         if self.correct_count + self.incorrect_count != 4:
             self.generate_question()
@@ -131,14 +134,28 @@ class MathQuizApp:
             self.Map_instance.incorrect += self.incorrect_count
             window.destroy()
 
+        # Update counters
+        self.canvas.itemconfig(self.correct_count_label, text=f"Correct: {self.correct_count}")
+        self.canvas.itemconfig(self.incorrect_count_label,text=f"Incorrect: {self.incorrect_count}")
+
+        self.generate_question()
+
     def generate_question(self):
-        # Clear the result label
-        self.result_label.config(text="")
         # Clear the answer entry
         self.answer_entry.delete(0, tk.END)
         
-        num1 = random.randint(1, 20)
-        num2 = random.randint(1, 20)
+        num1 = random.randint(1, 10)
+        num2 = random.randint(1, 10)
         operation = random.choice(['+', '-', '*', '/'])
+        
+        # Ensure subtraction doesn't result in a negative number
+        if operation == '-':
+            num1, num2 = max(num1, num2), min(num1, num2)
+        
+        # Ensure division doesn't result in a decimal and num2 divides num1 evenly
+        if operation == '/':
+            num2 = random.randint(1, 10)  # num2 should be a divisor of num1
+            num1 = num2 * random.randint(1, 10)  # num1 should be a multiple of num2
+        
         question_text = f"What is {num1} {operation} {num2}?"
         self.canvas.itemconfig(self.question_label, text=question_text)

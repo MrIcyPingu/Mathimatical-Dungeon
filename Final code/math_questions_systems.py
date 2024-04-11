@@ -124,6 +124,10 @@ class MathQuizApp:
             self.result_label.config(text=f"Wrong. Correct answer is {correct_answer}")
             self.incorrect_count += 1
 
+        # Update counters
+        self.canvas.itemconfig(self.correct_count_label, text=f"Correct: {self.correct_count}")
+        self.canvas.itemconfig(self.incorrect_count_label,text=f"Incorrect: {self.incorrect_count}")
+
         if self.correct_count + self.incorrect_count != 4:
             self.generate_question()
         else:
@@ -134,11 +138,6 @@ class MathQuizApp:
             self.Map_instance.incorrect += self.incorrect_count
             window.destroy()
 
-        # Update counters
-        self.canvas.itemconfig(self.correct_count_label, text=f"Correct: {self.correct_count}")
-        self.canvas.itemconfig(self.incorrect_count_label,text=f"Incorrect: {self.incorrect_count}")
-
-        self.generate_question()
 
     def generate_question(self):
         # Clear the answer entry
